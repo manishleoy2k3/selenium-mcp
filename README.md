@@ -209,6 +209,92 @@ MCP Selenium is designed to be used with AI systems that support the Model Conte
 2. Configure the AI system to connect to the server via stdin/stdout
 3. Send natural language commands to the AI, which will translate them to MCP commands
 
+## AI Agent: Page Object Model Automation
+
+The repository includes `selenium_agent.py`, a local Python agent that starts this
+MCP server as a subprocess, opens the OrangeHRM login page, discovers the MCP tools,
+and lets an OpenAI-compatible model inspect and automate the page. The agent is
+instructed to generate Java Selenium tests using the Page Object Model (POM), use
+explicit waits, and execute the requested flow before reporting the result.
+
+### Local Setup
+
+Prerequisites:
+
+- Java 11 or newer
+- Maven
+- Python 3.10 or newer
+- Chrome installed (or set the agent code to bootstrap Firefox)
+- An OpenAI-compatible model endpoint with tool-calling support
+
+Build the MCP server and install the agent dependency:
+
+```bash
+mvn clean package
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install -r requirements-agent.txt
+```
+
+Configure the model endpoint in the shell. For Azure OpenAI, use the deployment
+name in `OPENAI_MODEL` and the OpenAI-compatible `/openai/v1/` endpoint. Do not
+commit the API key.
+
+```bash
+export OPENAI_API_KEY="your-key"
+export OPENAI_BASE_URL="https://your-resource.openai.azure.com/openai/v1/"
+export OPENAI_MODEL="your-model-deployment"
+```
+
+Run the default smoke-test request:
+
+```bash
+python selenium_agent.py
+```
+
+Or provide a natural-language test request:
+
+```bash
+python selenium_agent.py "Create and execute a POM test for a valid OrangeHRM login, then show the generated Java page and test classes"
+```
+
+The agent automatically runs these MCP calls before the model receives the task:
+
+1. `start_browser` with Chrome in visible mode.
+2. `navigate` to `https://opensource-demo.orangehrmlive.com/web/index.php/auth/login`.
+
+The model then calls tools such as `find_element`, `send_keys`, `click_element`,
+`get_element_text`, and `take_screenshot` through the Java MCP server. Close the
+agent with Ctrl+C if a run is interrupted; its cleanup handler closes the browser.
+
+### Using a Local OpenAI-Compatible Model
+
+Point `OPENAI_BASE_URL` at the local server's OpenAI-compatible API and set
+`OPENAI_API_KEY` to any value accepted by that server. The model must support tool
+calls and return structured function arguments.
+
+### Deploying the Agent to Microsoft Foundry
+
+The Python script is intentionally local-first because it launches a Java process
+and a real browser. For a hosted Foundry deployment, package the Java fat JAR and
+Chrome/ChromeDriver in the same container, expose the agent through a hosted-agent
+entry point, and keep `OPENAI_API_KEY` in a managed secret. The browser must run
+headlessly in that container, and screenshots should be written to a mounted or
+object-storage-backed directory.
+
+In VS Code, use Foundry Toolkit to select or create a Foundry project, then scaffold
+a hosted Python agent and adapt the tool bridge from `selenium_agent.py`. Configure
+the MCP JAR path with `SELENIUM_MCP_JAR`. Test locally with the Agent Inspector
+before deploying. A hosted deployment should also restrict allowed target domains,
+avoid accepting arbitrary file paths, and use test credentials from a secret store.
+
+### Troubleshooting the Agent
+
+- `MCP JAR not found`: run `mvn clean package` or set `SELENIUM_MCP_JAR` to an absolute path.
+- `Missing environment variables`: set the three `OPENAI_*` variables shown above.
+- Browser startup failure: install Chrome, or change the bootstrap call to Firefox.
+- Model makes invalid calls: use a tool-calling model and verify the endpoint's `/v1/` URL.
+
 ## Troubleshooting
 
 ### Common Issues
