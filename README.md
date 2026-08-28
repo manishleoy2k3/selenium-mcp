@@ -138,7 +138,7 @@ MCP Selenium is designed to be used with AI systems that support the Model Conte
 
 Prerequisites:
 
-- Java 11 or newer
+- Java 17 or newer
 - Maven
 - Chrome installed (or set the agent code to bootstrap Firefox)
 - An OpenAI-compatible model endpoint with tool-calling support

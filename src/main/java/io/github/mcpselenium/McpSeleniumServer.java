@@ -19,7 +19,6 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.nio.file.Files;
@@ -27,7 +26,6 @@ import java.nio.file.Paths;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Base64;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -553,7 +551,7 @@ public class McpSeleniumServer {
 
 		ObjectNode browserProp = objectMapper.createObjectNode();
 		browserProp.put("type", "string");
-		browserProp.put("enum", objectMapper.createArrayNode().add("chrome").add("firefox"));
+		browserProp.set("enum", objectMapper.createArrayNode().add("chrome").add("firefox"));
 		browserProp.put("description", "Browser to launch (chrome or firefox)");
 
 		ObjectNode headlessProp = objectMapper.createObjectNode();
@@ -562,7 +560,7 @@ public class McpSeleniumServer {
 
 		ObjectNode argsProp = objectMapper.createObjectNode();
 		argsProp.put("type", "array");
-		argsProp.put("items", objectMapper.createObjectNode().put("type", "string"));
+		argsProp.set("items", objectMapper.createObjectNode().put("type", "string"));
 		argsProp.put("description", "Additional browser arguments");
 
 		ObjectNode optionsProps = objectMapper.createObjectNode();
@@ -607,7 +605,7 @@ public class McpSeleniumServer {
 
 		ObjectNode byProp = objectMapper.createObjectNode();
 		byProp.put("type", "string");
-		byProp.put("enum",
+		byProp.set("enum",
 				objectMapper.createArrayNode().add("id").add("css").add("xpath").add("name").add("tag").add("class"));
 		byProp.put("description", "Locator strategy to find element");
 
@@ -651,7 +649,7 @@ public class McpSeleniumServer {
 
 		ObjectNode targetByProp = objectMapper.createObjectNode();
 		targetByProp.put("type", "string");
-		targetByProp.put("enum",
+		targetByProp.set("enum",
 				objectMapper.createArrayNode().add("id").add("css").add("xpath").add("name").add("tag").add("class"));
 		targetByProp.put("description", "Locator strategy to find target element");
 

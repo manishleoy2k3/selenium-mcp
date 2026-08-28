@@ -559,7 +559,7 @@ private static SyncToolSpecification findElementTool() {
             String result = toolAction.run();
 
             return CallToolResult.builder()
-                    .content(List.of(new TextContent(result)))
+                    .content(List.of(TextContent.builder(result).build()))
                     .isError(false)
                     .build();
         } catch (Exception exception) {
@@ -567,8 +567,9 @@ private static SyncToolSpecification findElementTool() {
                     "Tool execution failed: " + exception.getMessage());
 
             return CallToolResult.builder()
-                    .content(List.of(new TextContent(
-                            "Tool failed: " + exception.getMessage())))
+                    .content(List.of(TextContent.builder(
+                            "Tool failed: " + exception.getMessage())
+                            .build()))
                     .isError(true)
                     .build();
         }

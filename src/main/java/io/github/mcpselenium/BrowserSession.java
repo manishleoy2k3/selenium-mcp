@@ -40,7 +40,7 @@ public final class BrowserSession {
                 : browser.toLowerCase(Locale.ROOT);
 
         switch (selectedBrowser) {
-            case "chrome" -> {
+            case "chrome": {
                 ChromeOptions options = new ChromeOptions();
 
                 if (headless) {
@@ -53,9 +53,10 @@ public final class BrowserSession {
                         "--start-maximized");
 
                 driver = new ChromeDriver(options);
+                break;
             }
 
-            case "firefox" -> {
+            case "firefox": {
                 FirefoxOptions options = new FirefoxOptions();
 
                 if (headless) {
@@ -63,10 +64,12 @@ public final class BrowserSession {
                 }
 
                 driver = new FirefoxDriver(options);
+                break;
             }
 
-            default -> throw new IllegalArgumentException(
-                    "Unsupported browser: " + selectedBrowser);
+            default:
+                throw new IllegalArgumentException(
+                        "Unsupported browser: " + selectedBrowser);
         }
 
         driver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(60));
@@ -234,12 +237,19 @@ public final class BrowserSession {
                 : state.toLowerCase(Locale.ROOT);
 
         switch (expectedState) {
-            case "present" -> new WebDriverWait(driver, timeout(timeoutSeconds))
-                    .until(ExpectedConditions.presenceOfElementLocated(by));
-            case "visible" -> waitForVisible(by, timeoutSeconds);
-            case "clickable" -> waitForClickable(by, timeoutSeconds);
-            default -> throw new IllegalArgumentException(
-                    "Unsupported element state: " + state);
+            case "present":
+                new WebDriverWait(driver, timeout(timeoutSeconds))
+                        .until(ExpectedConditions.presenceOfElementLocated(by));
+                break;
+            case "visible":
+                waitForVisible(by, timeoutSeconds);
+                break;
+            case "clickable":
+                waitForClickable(by, timeoutSeconds);
+                break;
+            default:
+                throw new IllegalArgumentException(
+                        "Unsupported element state: " + state);
         }
 
         return "Element is " + expectedState
@@ -260,11 +270,18 @@ public final class BrowserSession {
         String method = selectBy.toLowerCase(Locale.ROOT);
 
         switch (method) {
-            case "text" -> select.selectByVisibleText(option);
-            case "value" -> select.selectByValue(option);
-            case "index" -> select.selectByIndex(Integer.parseInt(option));
-            default -> throw new IllegalArgumentException(
-                    "Unsupported selectBy value: " + selectBy);
+            case "text":
+                select.selectByVisibleText(option);
+                break;
+            case "value":
+                select.selectByValue(option);
+                break;
+            case "index":
+                select.selectByIndex(Integer.parseInt(option));
+                break;
+            default:
+                throw new IllegalArgumentException(
+                        "Unsupported selectBy value: " + selectBy);
         }
 
         return "Selected option by " + selectBy
@@ -348,10 +365,12 @@ public final class BrowserSession {
                             + " characters or fewer");
         }
 
-        if (!(driver instanceof JavascriptExecutor executor)) {
+        if (!(driver instanceof JavascriptExecutor)) {
             throw new IllegalStateException(
                     "Current driver does not support JavaScript execution");
         }
+
+        JavascriptExecutor executor = (JavascriptExecutor) driver;
 
         Object result;
 
@@ -448,11 +467,12 @@ public final class BrowserSession {
     public synchronized String takeScreenshotBase64() {
         requireDriver();
 
-        if (!(driver instanceof TakesScreenshot screenshotDriver)) {
+        if (!(driver instanceof TakesScreenshot)) {
             throw new IllegalStateException(
                     "Current driver does not support screenshots");
         }
 
+        TakesScreenshot screenshotDriver = (TakesScreenshot) driver;
         byte[] bytes = screenshotDriver.getScreenshotAs(OutputType.BYTES);
 
         return Base64.getEncoder().encodeToString(bytes);
@@ -461,61 +481,39 @@ public final class BrowserSession {
     public synchronized String getAccessibilitySnapshot() {
         requireDriver();
 
-        String script = """
-                return JSON.stringify((() => {
-                  const visible = element => {
-                    const style = window.getComputedStyle(element);
-                    const rect = element.getBoundingClientRect();
-                    return style.visibility !== 'hidden'
-                      && style.display !== 'none'
-                      && rect.width > 0
-                      && rect.height > 0;
-                  };
-
-                  const nameOf = element =>
-                    element.getAttribute('aria-label')
-                    || element.getAttribute('alt')
-                    || element.getAttribute('title')
-                    || element.innerText
-                    || element.value
-                    || '';
-
-                  const roleOf = element =>
-                    element.getAttribute('role')
-                    || ({
-                      A: 'link',
-                      BUTTON: 'button',
-                      INPUT: element.type || 'input',
-                      SELECT: 'select',
-                      TEXTAREA: 'textbox',
-                      IMG: 'image'
-                    })[element.tagName]
-                    || '';
-
-                  const selector =
-                    'a,button,input,select,textarea,img,[role],'
-                    + '[aria-label],[aria-labelledby],h1,h2,h3,h4,h5,h6';
-
-                  const nodes = Array.from(document.body.querySelectorAll(selector))
-                    .filter(visible)
-                    .slice(0, 200)
-                    .map((element, index) => ({
-                      index,
-                      tag: element.tagName.toLowerCase(),
-                      role: roleOf(element),
-                      name: nameOf(element).replace(/\\s+/g, ' ').trim().slice(0, 160),
-                      disabled: element.disabled === true,
-                      href: element.href || null
-                    }));
-
-                  return {
-                    title: document.title,
-                    url: location.href,
-                    count: nodes.length,
-                    nodes
-                  };
-                })(), null, 2);
-                """;
+        String script =
+            "return JSON.stringify((() => {\n"
+            + "  const visible = element => {\n"
+            + "    const style = window.getComputedStyle(element);\n"
+            + "    const rect = element.getBoundingClientRect();\n"
+            + "    return style.visibility !== 'hidden'\n"
+            + "      && style.display !== 'none'\n"
+            + "      && rect.width > 0\n"
+            + "      && rect.height > 0;\n"
+            + "  };\n\n"
+            + "  const nameOf = element =>\n"
+            + "    element.getAttribute('aria-label')\n"
+            + "    || element.getAttribute('alt')\n"
+            + "    || element.getAttribute('title')\n"
+            + "    || element.innerText\n"
+            + "    || element.value\n"
+            + "    || '';\n\n"
+            + "  const roleOf = element =>\n"
+            + "    element.getAttribute('role')\n"
+            + "    || ({ A: 'link', BUTTON: 'button', INPUT: element.type || 'input',\n"
+            + "         SELECT: 'select', TEXTAREA: 'textbox', IMG: 'image' })[element.tagName]\n"
+            + "    || '';\n\n"
+            + "  const selector = 'a,button,input,select,textarea,img,[role],'\n"
+            + "    + '[aria-label],[aria-labelledby],h1,h2,h3,h4,h5,h6';\n\n"
+            + "  const nodes = Array.from(document.body.querySelectorAll(selector))\n"
+            + "    .filter(visible).slice(0, 200)\n"
+            + "    .map((element, index) => ({\n"
+            + "      index, tag: element.tagName.toLowerCase(), role: roleOf(element),\n"
+            + "      name: nameOf(element).replace(/\\s+/g, ' ').trim().slice(0, 160),\n"
+            + "      disabled: element.disabled === true, href: element.href || null\n"
+            + "    }));\n\n"
+            + "  return { title: document.title, url: location.href, count: nodes.length, nodes };\n"
+            + "})(), null, 2);\n";
 
         Object result = javascriptExecutor().executeScript(script);
 
@@ -530,11 +528,12 @@ public final class BrowserSession {
     public synchronized byte[] takeScreenshot() {
         requireDriver();
 
-        if (!(driver instanceof TakesScreenshot screenshotDriver)) {
+        if (!(driver instanceof TakesScreenshot)) {
             throw new IllegalStateException(
                     "Current driver does not support screenshots");
         }
 
+        TakesScreenshot screenshotDriver = (TakesScreenshot) driver;
         return screenshotDriver.getScreenshotAs(OutputType.BYTES);
     }
 
@@ -592,12 +591,12 @@ public final class BrowserSession {
     private JavascriptExecutor javascriptExecutor() {
         requireDriver();
 
-        if (!(driver instanceof JavascriptExecutor executor)) {
+        if (!(driver instanceof JavascriptExecutor)) {
             throw new IllegalStateException(
                     "Current driver does not support JavaScript execution");
         }
 
-        return executor;
+        return (JavascriptExecutor) driver;
     }
 
     private Duration timeout(int timeoutSeconds) {
@@ -617,18 +616,30 @@ public final class BrowserSession {
                     "locator value is required");
         }
 
-        return switch (strategy.toLowerCase(Locale.ROOT)) {
-            case "id" -> By.id(value);
-            case "name" -> By.name(value);
-            case "css", "cssselector" -> By.cssSelector(value);
-            case "xpath" -> By.xpath(value);
-            case "class", "classname" -> By.className(value);
-            case "tag", "tagname" -> By.tagName(value);
-            case "linktext" -> By.linkText(value);
-            case "partiallinktext" -> By.partialLinkText(value);
-            default -> throw new IllegalArgumentException(
-                    "Unsupported locator strategy: " + strategy);
-        };
+        switch (strategy.toLowerCase(Locale.ROOT)) {
+            case "id":
+                return By.id(value);
+            case "name":
+                return By.name(value);
+            case "css":
+            case "cssselector":
+                return By.cssSelector(value);
+            case "xpath":
+                return By.xpath(value);
+            case "class":
+            case "classname":
+                return By.className(value);
+            case "tag":
+            case "tagname":
+                return By.tagName(value);
+            case "linktext":
+                return By.linkText(value);
+            case "partiallinktext":
+                return By.partialLinkText(value);
+            default:
+                throw new IllegalArgumentException(
+                        "Unsupported locator strategy: " + strategy);
+        }
     }
 
     private Keys keyValue(String key) {
@@ -636,24 +647,39 @@ public final class BrowserSession {
             throw new IllegalArgumentException("key is required");
         }
 
-        return switch (key.toUpperCase(Locale.ROOT)) {
-            case "ENTER" -> Keys.ENTER;
-            case "TAB" -> Keys.TAB;
-            case "ESCAPE" -> Keys.ESCAPE;
-            case "SPACE" -> Keys.SPACE;
-            case "BACKSPACE" -> Keys.BACK_SPACE;
-            case "DELETE" -> Keys.DELETE;
-            case "ARROW_UP" -> Keys.ARROW_UP;
-            case "ARROW_DOWN" -> Keys.ARROW_DOWN;
-            case "ARROW_LEFT" -> Keys.ARROW_LEFT;
-            case "ARROW_RIGHT" -> Keys.ARROW_RIGHT;
-            case "HOME" -> Keys.HOME;
-            case "END" -> Keys.END;
-            case "PAGE_UP" -> Keys.PAGE_UP;
-            case "PAGE_DOWN" -> Keys.PAGE_DOWN;
-            default -> throw new IllegalArgumentException(
-                    "Unsupported key: " + key);
-        };
+        switch (key.toUpperCase(Locale.ROOT)) {
+            case "ENTER":
+                return Keys.ENTER;
+            case "TAB":
+                return Keys.TAB;
+            case "ESCAPE":
+                return Keys.ESCAPE;
+            case "SPACE":
+                return Keys.SPACE;
+            case "BACKSPACE":
+                return Keys.BACK_SPACE;
+            case "DELETE":
+                return Keys.DELETE;
+            case "ARROW_UP":
+                return Keys.ARROW_UP;
+            case "ARROW_DOWN":
+                return Keys.ARROW_DOWN;
+            case "ARROW_LEFT":
+                return Keys.ARROW_LEFT;
+            case "ARROW_RIGHT":
+                return Keys.ARROW_RIGHT;
+            case "HOME":
+                return Keys.HOME;
+            case "END":
+                return Keys.END;
+            case "PAGE_UP":
+                return Keys.PAGE_UP;
+            case "PAGE_DOWN":
+                return Keys.PAGE_DOWN;
+            default:
+                throw new IllegalArgumentException(
+                        "Unsupported key: " + key);
+        }
     }
 
     private String trim(String value, int maxLength) {
