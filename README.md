@@ -1,10 +1,16 @@
-# MCP Selenium
+# Selenium MCP Server
 
 A Java implementation of the Model Context Protocol (MCP) for Selenium WebDriver, enabling browser automation through standardized MCP clients.
 
 ## Overview
 
 MCP Selenium provides a bridge between the Model Context Protocol and Selenium WebDriver. It allows AI assistants and other MCP-compatible clients to perform browser automation tasks using a standardized set of tools.
+
+## Supported Browsers
+
+- Chrome
+- Firefox
+- Headless mode for both browsers
 
 ## Project Structure
 
@@ -16,12 +22,12 @@ selenium-mcp/
 │           └── io/
 │               └── github/
 │                       └── mcpselenium/
-│                           ├── McpSeleniumServer.java       # The main MCP server implementation
-│                           ├── McpSeleniumLauncher.java     # Launcher script for the server
-│                           └── AdvancedMcpClient.java       # GUI client for testing
+│                           ├── BrowserSession.java       # The main MCP server implementation
+│                           ├── SeleniumMCPServer.java    # Launcher script for the server
+
 ├── target/
-│   └── mcp-selenium-0.1.0-jar-with-dependencies.jar         # Compiled JAR with dependencies
-└── pom.xml                                                  # Maven project configuration
+│   └── selenium-mcp-java.jar         # Compiled JAR with dependencies
+└── pom.xml                           # Maven project configuration
 ```
 
 ## Prerequisites
@@ -41,7 +47,7 @@ cd selenium-mcp
 mvn clean package
 ```
 
-This will create the JAR file at `target/mcp-selenium-0.1.0-jar-with-dependencies.jar`.
+This will create the JAR file at `target/selenium-mcp-java.jar`.
 
 ## Usage Options
 
@@ -52,154 +58,72 @@ This will create the JAR file at `target/mcp-selenium-0.1.0-jar-with-dependencie
 Start the MCP Selenium server from the command line:
 
 ```bash
-java -jar target/mcp-selenium-0.1.0-jar-with-dependencies.jar
+java -jar target/selenium-mcp-java.jar
 ```
 
 The server will start and wait for commands on standard input. You'll see the server information as initial output.
 
-#### Sending Commands
+## Available Tools
 
-You can now send JSON commands to the server. Type or paste the commands directly into the terminal, one per line.
+### Browser Lifecycle
 
-##### Example Commands
+- `start_browser` - Starts a Chrome or Firefox session.
+- `close_browser` - Closes the active browser session.
 
-1. Start a Chrome browser:
-```json
-{"type":"tool_call","tool_call_id":"call-1","name":"start_browser","params":{"browser":"chrome","options":{"headless":false}}}
-```
+### Navigation and Page Information
 
-2. Navigate to a website:
-```json
-{"type":"tool_call","tool_call_id":"call-2","name":"navigate","params":{"url":"https://www.example.com"}}
-```
+- `navigate` - Opens a URL.
+- `get_page_information` - Returns the page title and current URL.
+- `get_accessibility_snapshot` - Returns a compact accessibility-oriented DOM snapshot.
+- `take_screenshot` - Returns a base64-encoded PNG screenshot.
 
-3. Find an element:
-```json
-{"type":"tool_call","tool_call_id":"call-3","name":"find_element","params":{"by":"css","value":"h1"}}
-```
+### Element Interaction
 
-4. Get element text:
-```json
-{"type":"tool_call","tool_call_id":"call-4","name":"get_element_text","params":{"by":"css","value":"h1"}}
-```
+- `find_element` - Finds the first matching element and returns its summary.
+- `find_elements` - Finds all matching elements and returns compact summaries.
+- `element_exists` - Checks whether a visible element exists.
+- `wait_for_element` - Waits for an element to be present, visible, or clickable.
+- `click_element` - Clicks a visible element.
+- `type_text` - Types text into a form element.
+- `get_element_text` - Returns visible element text.
+- `get_element_attribute` - Returns an element attribute.
+- `select_option` - Selects an option from a `<select>` element.
+- `scroll_to_element` - Scrolls an element into view.
+- `hover_element` - Moves the pointer over an element.
+- `press_key` - Presses a supported keyboard key.
+- `upload_file` - Uploads a local file through a file input.
 
-5. Click an element:
-```json
-{"type":"tool_call","tool_call_id":"call-5","name":"click_element","params":{"by":"id","value":"submit-button"}}
-```
+### Frames and Windows
 
-6. Type text into an element:
-```json
-{"type":"tool_call","tool_call_id":"call-6","name":"send_keys","params":{"by":"id","value":"search-box","text":"search query"}}
-```
+- `switch_to_frame` - Switches to a frame by locator, name, ID, or index.
+- `switch_to_default_content` - Returns to the top-level document.
+- `get_window_handles` - Returns open browser window handles.
+- `switch_to_window` - Switches to a window by handle.
 
-7. Take a screenshot:
-```json
-{"type":"tool_call","tool_call_id":"call-7","name":"take_screenshot","params":{"outputPath":"screenshot.png"}}
-```
+### JavaScript
 
-8. Close the browser:
-```json
-{"type":"tool_call","tool_call_id":"call-8","name":"close_session","params":{}}
-```
+- `execute_script` - Executes JavaScript in the active page or against a target element.
+
+## Locator Strategies
+
+Element tools support:
+
+- `id`
+- `name`
+- `css`
+- `xpath`
+- `class`
+- `tag`
+- `linkText`
+- `partialLinkText`
+
+Most element operations support a configurable timeout between 1 and 120 seconds.
+
 
 #### Closing the Server
 
 To stop the server, use Ctrl+C in the terminal.
 
-### Option 2: GUI Client
-
-For a more user-friendly experience, you can use the included GUI client.
-
-#### Starting the GUI Client
-
-Compile and run the client:
-
-```bash
-# Compile the client
-javac -d target/classes src/main/java/io/github/mcpselenium/AdvancedMcpClient.java
-
-# Run the client
-java -cp target/classes io.github.mcpselenium.AdvancedMcpClient
-```
-
-<img width="1711" alt="Screenshot 2025-04-15 at 4 34 37 PM" src="https://github.com/user-attachments/assets/4f21d03d-dda1-4040-a96e-737709422c63" />
-
-
-
-#### Using the GUI
-
-The GUI client automatically starts the MCP Selenium server when launched. The interface includes:
-
-1. **Command Selector**: Dropdown menu to select the MCP command you want to execute.
-2. **JSON Parameters**: Text field to enter command parameters in JSON format.
-3. **Quick Action Buttons**: 
-   - Start Chrome: Launches Chrome browser
-   - Navigate: Opens a dialog to enter a URL
-   - Screenshot: Takes a screenshot
-   - Close Browser: Closes the current session
-4. **Log Area**: Displays server responses and logs.
-
-#### Examples of GUI Usage
-
-##### Find Element
-
-1. Select "find_element" from the command dropdown.
-2. Enter parameters in the JSON field:
-```json
-{"by":"id","value":"login-button"}
-```
-3. Click "Send".
-
-##### Send Keys (Type Text)
-
-1. Select "send_keys" from the command dropdown.
-2. Enter parameters in the JSON field:
-```json
-{"by":"id","value":"username","text":"testuser@example.com"}
-```
-3. Click "Send".
-
-##### Click Element
-
-1. Select "click_element" from the command dropdown.
-2. Enter parameters in the JSON field:
-```json
-{"by":"css","value":"button.submit"}
-```
-3. Click "Send".
-
-## Supported Commands
-
-The MCP Selenium Server supports the following commands:
-
-| Command | Description | Required Parameters | Optional Parameters |
-|---------|-------------|---------------------|---------------------|
-| `start_browser` | Launches a browser | `browser` ("chrome" or "firefox") | `options.headless`, `options.arguments` |
-| `navigate` | Navigates to a URL | `url` | - |
-| `find_element` | Finds an element | `by`, `value` | `timeout` |
-| `click_element` | Clicks an element | `by`, `value` | `timeout` |
-| `send_keys` | Types text into an element | `by`, `value`, `text` | `timeout` |
-| `get_element_text` | Gets text from an element | `by`, `value` | `timeout` |
-| `hover` | Hovers over an element | `by`, `value` | `timeout` |
-| `drag_and_drop` | Drags and drops an element | `by`, `value`, `targetBy`, `targetValue` | `timeout` |
-| `double_click` | Double-clicks an element | `by`, `value` | `timeout` |
-| `right_click` | Right-clicks an element | `by`, `value` | `timeout` |
-| `press_key` | Presses a keyboard key | `key` | - |
-| `upload_file` | Uploads a file | `by`, `value`, `filePath` | `timeout` |
-| `take_screenshot` | Takes a screenshot | - | `outputPath` |
-| `close_session` | Closes the browser | - | - |
-
-## Locator Strategies
-
-For commands that interact with elements, use these locator strategies in the `by` parameter:
-
-- `id`: Element ID
-- `css`: CSS selector
-- `xpath`: XPath expression
-- `name`: Element name
-- `tag`: HTML tag name
-- `class`: CSS class name
 
 ## Integration with AI Systems
 
@@ -209,13 +133,6 @@ MCP Selenium is designed to be used with AI systems that support the Model Conte
 2. Configure the AI system to connect to the server via stdin/stdout
 3. Send natural language commands to the AI, which will translate them to MCP commands
 
-## AI Agent: Page Object Model Automation
-
-The repository includes `selenium_agent.py`, a local Python agent that starts this
-MCP server as a subprocess, opens the OrangeHRM login page, discovers the MCP tools,
-and lets an OpenAI-compatible model inspect and automate the page. The agent is
-instructed to generate Java Selenium tests using the Page Object Model (POM), use
-explicit waits, and execute the requested flow before reporting the result.
 
 ### Local Setup
 
@@ -223,7 +140,6 @@ Prerequisites:
 
 - Java 11 or newer
 - Maven
-- Python 3.10 or newer
 - Chrome installed (or set the agent code to bootstrap Firefox)
 - An OpenAI-compatible model endpoint with tool-calling support
 
@@ -231,31 +147,6 @@ Build the MCP server and install the agent dependency:
 
 ```bash
 mvn clean package
-python3 -m venv .venv
-source .venv/bin/activate
-python -m pip install -r requirements-agent.txt
-```
-
-Configure the model endpoint in the shell. For Azure OpenAI, use the deployment
-name in `OPENAI_MODEL` and the OpenAI-compatible `/openai/v1/` endpoint. Do not
-commit the API key.
-
-```bash
-export OPENAI_API_KEY="your-key"
-export OPENAI_BASE_URL="https://your-resource.openai.azure.com/openai/v1/"
-export OPENAI_MODEL="your-model-deployment"
-```
-
-Run the default smoke-test request:
-
-```bash
-python selenium_agent.py
-```
-
-Or provide a natural-language test request:
-
-```bash
-python selenium_agent.py "Create and execute a POM test for a valid OrangeHRM login, then show the generated Java page and test classes"
 ```
 
 The agent automatically runs these MCP calls before the model receives the task:
@@ -267,33 +158,6 @@ The model then calls tools such as `find_element`, `send_keys`, `click_element`,
 `get_element_text`, and `take_screenshot` through the Java MCP server. Close the
 agent with Ctrl+C if a run is interrupted; its cleanup handler closes the browser.
 
-### Using a Local OpenAI-Compatible Model
-
-Point `OPENAI_BASE_URL` at the local server's OpenAI-compatible API and set
-`OPENAI_API_KEY` to any value accepted by that server. The model must support tool
-calls and return structured function arguments.
-
-### Deploying the Agent to Microsoft Foundry
-
-The Python script is intentionally local-first because it launches a Java process
-and a real browser. For a hosted Foundry deployment, package the Java fat JAR and
-Chrome/ChromeDriver in the same container, expose the agent through a hosted-agent
-entry point, and keep `OPENAI_API_KEY` in a managed secret. The browser must run
-headlessly in that container, and screenshots should be written to a mounted or
-object-storage-backed directory.
-
-In VS Code, use Foundry Toolkit to select or create a Foundry project, then scaffold
-a hosted Python agent and adapt the tool bridge from `selenium_agent.py`. Configure
-the MCP JAR path with `SELENIUM_MCP_JAR`. Test locally with the Agent Inspector
-before deploying. A hosted deployment should also restrict allowed target domains,
-avoid accepting arbitrary file paths, and use test credentials from a secret store.
-
-### Troubleshooting the Agent
-
-- `MCP JAR not found`: run `mvn clean package` or set `SELENIUM_MCP_JAR` to an absolute path.
-- `Missing environment variables`: set the three `OPENAI_*` variables shown above.
-- Browser startup failure: install Chrome, or change the bootstrap call to Firefox.
-- Model makes invalid calls: use a tool-calling model and verify the endpoint's `/v1/` URL.
 
 ## Troubleshooting
 
@@ -319,9 +183,6 @@ avoid accepting arbitrary file paths, and use test credentials from a secret sto
    - Ensure the directory exists
    - Check file permissions
 
-## License
-
-This project is licensed under the MIT License.
 
 ## Acknowledgements
 
