@@ -76,23 +76,21 @@ public final class SeleniumMcpServer {
     }
 
     private static SyncToolSpecification startBrowserTool() {
-        String schema = """
-            {
-              "type": "object",
-              "properties": {
-                "browser": {
-                  "type": "string",
-                  "enum": ["chrome", "firefox"]
-                },
-                "headless": {
-                  "type": "boolean",
-                  "default": false
-                }
-              },
-              "required": ["browser"],
-              "additionalProperties": false
-            }
-            """;
+        String schema = "{"
+                + "\"type\":\"object\","
+                + "\"properties\":{"
+                + "\"browser\":{"
+                + "\"type\":\"string\","
+                + "\"enum\":[\"chrome\",\"firefox\"]"
+                + "},"
+                + "\"headless\":{"
+                + "\"type\":\"boolean\","
+                + "\"default\":false"
+                + "}"
+                + "},"
+                + "\"required\":[\"browser\"],"
+                + "\"additionalProperties\":false"
+                + "}";
 
         return SyncToolSpecification.builder()
                 .tool(Tool.builder("start_browser", schemaMap(schema))
@@ -109,18 +107,12 @@ public final class SeleniumMcpServer {
     }
 
     private static SyncToolSpecification navigateTool() {
-        String schema = """
-            {
-              "type": "object",
-              "properties": {
-                "url": {
-                  "type": "string"
-                }
-              },
-              "required": ["url"],
-              "additionalProperties": false
-            }
-            """;
+        String schema = "{"
+                + "\"type\":\"object\","
+                + "\"properties\":{\"url\":{\"type\":\"string\"}},"
+                + "\"required\":[\"url\"],"
+                + "\"additionalProperties\":false"
+                + "}";
 
         return SyncToolSpecification.builder()
                 .tool(Tool.builder("navigate", schemaMap(schema))
@@ -150,20 +142,15 @@ public final class SeleniumMcpServer {
     }
 
     private static SyncToolSpecification typeTool() {
-        String schema = """
-            {
-              "type": "object",
-              "properties": {
-                "strategy": { "type": "string", "enum": ["id", "name", "css", "xpath", "class", "tag", "linkText", "partialLinkText"] },
-                "value": { "type": "string" },
-                "text": { "type": "string" },
-                "clearFirst": { "type": "boolean", "default": true },
-                "timeoutSeconds": { "type": "integer", "minimum": 1, "maximum": 120, "default": 15 }
-              },
-              "required": ["strategy", "value", "text"],
-              "additionalProperties": false
-            }
-            """;
+        String schema = "{"
+                + "\"type\":\"object\","
+                + "\"properties\":{"
+                + "\"strategy\":{\"type\":\"string\",\"enum\":[\"id\",\"name\",\"css\",\"xpath\",\"class\",\"tag\",\"linkText\",\"partialLinkText\"]},"
+                + "\"value\":{\"type\":\"string\"},"
+                + "\"text\":{\"type\":\"string\"},"
+                + "\"clearFirst\":{\"type\":\"boolean\",\"default\":true},"
+                + "\"timeoutSeconds\":{\"type\":\"integer\",\"minimum\":1,\"maximum\":120,\"default\":15}"
+                + "},\"required\":[\"strategy\",\"value\",\"text\"],\"additionalProperties\":false}";
 
         return SyncToolSpecification.builder()
                 .tool(Tool.builder("type_text", schemaMap(schema))
@@ -196,19 +183,17 @@ public final class SeleniumMcpServer {
     }
 
     private static SyncToolSpecification getAttributeTool() {
-        String schema = """
-            {
-              "type": "object",
-              "properties": {
-                "strategy": { "type": "string", "enum": ["id", "name", "css", "xpath", "class", "tag", "linkText", "partialLinkText"] },
-                "value": { "type": "string" },
-                "attribute": { "type": "string" },
-                "timeoutSeconds": { "type": "integer", "minimum": 1, "maximum": 120, "default": 15 }
-              },
-              "required": ["strategy", "value", "attribute"],
-              "additionalProperties": false
-            }
-            """;
+        String schema = "{\n"
+                + "  \"type\": \"object\",\n"
+                + "  \"properties\": {\n"
+                + "    \"strategy\": { \"type\": \"string\", \"enum\": [\"id\", \"name\", \"css\", \"xpath\", \"class\", \"tag\", \"linkText\", \"partialLinkText\"] },\n"
+                + "    \"value\": { \"type\": \"string\" },\n"
+                + "    \"attribute\": { \"type\": \"string\" },\n"
+                + "    \"timeoutSeconds\": { \"type\": \"integer\", \"minimum\": 1, \"maximum\": 120, \"default\": 15 }\n"
+                + "  },\n"
+                + "  \"required\": [\"strategy\", \"value\", \"attribute\"],\n"
+                + "  \"additionalProperties\": false\n"
+                + "}\n";
 
         return SyncToolSpecification.builder()
                 .tool(Tool.builder("get_element_attribute", schemaMap(schema))
@@ -256,19 +241,17 @@ private static SyncToolSpecification findElementTool() {
     }
 
     private static SyncToolSpecification waitForElementTool() {
-        String schema = """
-            {
-              "type": "object",
-              "properties": {
-                "strategy": { "type": "string", "enum": ["id", "name", "css", "xpath", "class", "tag", "linkText", "partialLinkText"] },
-                "value": { "type": "string" },
-                "state": { "type": "string", "enum": ["present", "visible", "clickable"], "default": "visible" },
-                "timeoutSeconds": { "type": "integer", "minimum": 1, "maximum": 120, "default": 15 }
-              },
-              "required": ["strategy", "value"],
-              "additionalProperties": false
-            }
-            """;
+        String schema = "{\n"
+                + "  \"type\": \"object\",\n"
+                + "  \"properties\": {\n"
+                + "    \"strategy\": { \"type\": \"string\", \"enum\": [\"id\", \"name\", \"css\", \"xpath\", \"class\", \"tag\", \"linkText\", \"partialLinkText\"] },\n"
+                + "    \"value\": { \"type\": \"string\" },\n"
+                + "    \"state\": { \"type\": \"string\", \"enum\": [\"present\", \"visible\", \"clickable\"], \"default\": \"visible\" },\n"
+                + "    \"timeoutSeconds\": { \"type\": \"integer\", \"minimum\": 1, \"maximum\": 120, \"default\": 15 }\n"
+                + "  },\n"
+                + "  \"required\": [\"strategy\", \"value\"],\n"
+                + "  \"additionalProperties\": false\n"
+                + "}\n";
 
         return SyncToolSpecification.builder()
                 .tool(Tool.builder("wait_for_element", schemaMap(schema))
@@ -290,20 +273,18 @@ private static SyncToolSpecification findElementTool() {
     }
 
     private static SyncToolSpecification selectOptionTool() {
-        String schema = """
-            {
-              "type": "object",
-              "properties": {
-                "strategy": { "type": "string", "enum": ["id", "name", "css", "xpath", "class", "tag", "linkText", "partialLinkText"] },
-                "value": { "type": "string" },
-                "selectBy": { "type": "string", "enum": ["text", "value", "index"] },
-                "option": { "type": "string" },
-                "timeoutSeconds": { "type": "integer", "minimum": 1, "maximum": 120, "default": 15 }
-              },
-              "required": ["strategy", "value", "selectBy", "option"],
-              "additionalProperties": false
-            }
-            """;
+        String schema = "{\n"
+                + "  \"type\": \"object\",\n"
+                + "  \"properties\": {\n"
+                + "    \"strategy\": { \"type\": \"string\", \"enum\": [\"id\", \"name\", \"css\", \"xpath\", \"class\", \"tag\", \"linkText\", \"partialLinkText\"] },\n"
+                + "    \"value\": { \"type\": \"string\" },\n"
+                + "    \"selectBy\": { \"type\": \"string\", \"enum\": [\"text\", \"value\", \"index\"] },\n"
+                + "    \"option\": { \"type\": \"string\" },\n"
+                + "    \"timeoutSeconds\": { \"type\": \"integer\", \"minimum\": 1, \"maximum\": 120, \"default\": 15 }\n"
+                + "  },\n"
+                + "  \"required\": [\"strategy\", \"value\", \"selectBy\", \"option\"],\n"
+                + "  \"additionalProperties\": false\n"
+                + "}\n";
 
         return SyncToolSpecification.builder()
                 .tool(Tool.builder("select_option", schemaMap(schema))
@@ -323,19 +304,17 @@ private static SyncToolSpecification findElementTool() {
     }
 
     private static SyncToolSpecification switchToFrameTool() {
-        String schema = """
-            {
-              "type": "object",
-              "properties": {
-                "strategy": { "type": "string", "enum": ["id", "name", "css", "xpath", "class", "tag", "linkText", "partialLinkText"] },
-                "value": { "type": "string" },
-                "nameOrId": { "type": "string" },
-                "index": { "type": "integer", "minimum": 0 },
-                "timeoutSeconds": { "type": "integer", "minimum": 1, "maximum": 120, "default": 15 }
-              },
-              "additionalProperties": false
-            }
-            """;
+        String schema = "{\n"
+                + "  \"type\": \"object\",\n"
+                + "  \"properties\": {\n"
+                + "    \"strategy\": { \"type\": \"string\", \"enum\": [\"id\", \"name\", \"css\", \"xpath\", \"class\", \"tag\", \"linkText\", \"partialLinkText\"] },\n"
+                + "    \"value\": { \"type\": \"string\" },\n"
+                + "    \"nameOrId\": { \"type\": \"string\" },\n"
+                + "    \"index\": { \"type\": \"integer\", \"minimum\": 0 },\n"
+                + "    \"timeoutSeconds\": { \"type\": \"integer\", \"minimum\": 1, \"maximum\": 120, \"default\": 15 }\n"
+                + "  },\n"
+                + "  \"additionalProperties\": false\n"
+                + "}\n";
 
         return SyncToolSpecification.builder()
                 .tool(Tool.builder("switch_to_frame", schemaMap(schema))
@@ -377,16 +356,14 @@ private static SyncToolSpecification findElementTool() {
     }
 
     private static SyncToolSpecification switchToWindowTool() {
-        String schema = """
-            {
-              "type": "object",
-              "properties": {
-                "handle": { "type": "string" }
-              },
-              "required": ["handle"],
-              "additionalProperties": false
-            }
-            """;
+        String schema = "{\n"
+                + "  \"type\": \"object\",\n"
+                + "  \"properties\": {\n"
+                + "    \"handle\": { \"type\": \"string\" }\n"
+                + "  },\n"
+                + "  \"required\": [\"handle\"],\n"
+                + "  \"additionalProperties\": false\n"
+                + "}\n";
 
         return SyncToolSpecification.builder()
                 .tool(Tool.builder("switch_to_window", schemaMap(schema))
@@ -399,19 +376,17 @@ private static SyncToolSpecification findElementTool() {
     }
 
     private static SyncToolSpecification executeScriptTool() {
-        String schema = """
-            {
-              "type": "object",
-              "properties": {
-                "script": { "type": "string", "maxLength": 4000 },
-                "strategy": { "type": "string", "enum": ["id", "name", "css", "xpath", "class", "tag", "linkText", "partialLinkText"] },
-                "value": { "type": "string" },
-                "timeoutSeconds": { "type": "integer", "minimum": 1, "maximum": 120, "default": 15 }
-              },
-              "required": ["script"],
-              "additionalProperties": false
-            }
-            """;
+        String schema = "{\n"
+                + "  \"type\": \"object\",\n"
+                + "  \"properties\": {\n"
+                + "    \"script\": { \"type\": \"string\", \"maxLength\": 4000 },\n"
+                + "    \"strategy\": { \"type\": \"string\", \"enum\": [\"id\", \"name\", \"css\", \"xpath\", \"class\", \"tag\", \"linkText\", \"partialLinkText\"] },\n"
+                + "    \"value\": { \"type\": \"string\" },\n"
+                + "    \"timeoutSeconds\": { \"type\": \"integer\", \"minimum\": 1, \"maximum\": 120, \"default\": 15 }\n"
+                + "  },\n"
+                + "  \"required\": [\"script\"],\n"
+                + "  \"additionalProperties\": false\n"
+                + "}\n";
 
         return SyncToolSpecification.builder()
                 .tool(Tool.builder("execute_script", schemaMap(schema))
@@ -454,22 +429,17 @@ private static SyncToolSpecification findElementTool() {
     }
 
     private static SyncToolSpecification pressKeyTool() {
-        String schema = """
-            {
-              "type": "object",
-              "properties": {
-                "key": {
-                  "type": "string",
-                  "enum": ["ENTER", "TAB", "ESCAPE", "SPACE", "BACKSPACE", "DELETE", "ARROW_UP", "ARROW_DOWN", "ARROW_LEFT", "ARROW_RIGHT", "HOME", "END", "PAGE_UP", "PAGE_DOWN"]
-                },
-                "strategy": { "type": "string", "enum": ["id", "name", "css", "xpath", "class", "tag", "linkText", "partialLinkText"] },
-                "value": { "type": "string" },
-                "timeoutSeconds": { "type": "integer", "minimum": 1, "maximum": 120, "default": 15 }
-              },
-              "required": ["key"],
-              "additionalProperties": false
-            }
-            """;
+        String schema = "{\n"
+                + "  \"type\": \"object\",\n"
+                + "  \"properties\": {\n"
+                + "    \"key\": { \"type\": \"string\" },\n"
+                + "    \"strategy\": { \"type\": \"string\" },\n"
+                + "    \"value\": { \"type\": \"string\" },\n"
+                + "    \"timeoutSeconds\": { \"type\": \"integer\", \"minimum\": 1, \"maximum\": 120, \"default\": 15 }\n"
+                + "  },\n"
+                + "  \"required\": [\"key\"],\n"
+                + "  \"additionalProperties\": false\n"
+                + "}\n";
 
         return SyncToolSpecification.builder()
                 .tool(Tool.builder("press_key", schemaMap(schema))
@@ -492,19 +462,17 @@ private static SyncToolSpecification findElementTool() {
     }
 
     private static SyncToolSpecification uploadFileTool() {
-        String schema = """
-            {
-              "type": "object",
-              "properties": {
-                "strategy": { "type": "string", "enum": ["id", "name", "css", "xpath", "class", "tag", "linkText", "partialLinkText"] },
-                "value": { "type": "string" },
-                "filePath": { "type": "string" },
-                "timeoutSeconds": { "type": "integer", "minimum": 1, "maximum": 120, "default": 15 }
-              },
-              "required": ["strategy", "value", "filePath"],
-              "additionalProperties": false
-            }
-            """;
+        String schema = "{\n"
+                + "  \"type\": \"object\",\n"
+                + "  \"properties\": {\n"
+                + "    \"strategy\": { \"type\": \"string\" },\n"
+                + "    \"value\": { \"type\": \"string\" },\n"
+                + "    \"filePath\": { \"type\": \"string\" },\n"
+                + "    \"timeoutSeconds\": { \"type\": \"integer\", \"minimum\": 1, \"maximum\": 120, \"default\": 15 }\n"
+                + "  },\n"
+                + "  \"required\": [\"strategy\", \"value\", \"filePath\"],\n"
+                + "  \"additionalProperties\": false\n"
+                + "}\n";
 
         return SyncToolSpecification.builder()
                 .tool(Tool.builder("upload_file", schemaMap(schema))
@@ -547,19 +515,16 @@ private static SyncToolSpecification findElementTool() {
             String name,
             String description,
             ToolOperation operation) {
-
-        String schema = """
-            {
-              "type": "object",
-              "properties": {
-                "strategy": { "type": "string", "enum": ["id", "name", "css", "xpath", "class", "tag", "linkText", "partialLinkText"] },
-                "value": { "type": "string" },
-                "timeoutSeconds": { "type": "integer", "minimum": 1, "maximum": 120, "default": 15 }
-              },
-              "required": ["strategy", "value"],
-              "additionalProperties": false
-            }
-            """;
+                String schema = "{\n"
+                        + "  \"type\": \"object\",\n"
+                        + "  \"properties\": {\n"
+                        + "    \"strategy\": { \"type\": \"string\", \"enum\": [\"id\", \"name\", \"css\", \"xpath\", \"class\", \"tag\", \"linkText\", \"partialLinkText\"] },\n"
+                        + "    \"value\": { \"type\": \"string\" },\n"
+                        + "    \"timeoutSeconds\": { \"type\": \"integer\", \"minimum\": 1, \"maximum\": 120, \"default\": 15 }\n"
+                        + "  },\n"
+                        + "  \"required\": [\"strategy\", \"value\"],\n"
+                        + "  \"additionalProperties\": false\n"
+                        + "}\n";
 
         return SyncToolSpecification.builder()
                 .tool(Tool.builder(name, schemaMap(schema))
@@ -575,13 +540,11 @@ private static SyncToolSpecification findElementTool() {
             String description,
             ToolAction action) {
 
-        String schema = """
-            {
-              "type": "object",
-              "properties": {},
-              "additionalProperties": false
-            }
-            """;
+        String schema = "{\n"
+                + "  \"type\": \"object\",\n"
+                + "  \"properties\": {},\n"
+                + "  \"additionalProperties\": false\n"
+                + "}\n";
 
         return SyncToolSpecification.builder()
                 .tool(Tool.builder(name, schemaMap(schema))
@@ -670,8 +633,8 @@ private static SyncToolSpecification findElementTool() {
             return defaultValue;
         }
 
-        if (value instanceof Number number) {
-            return number.intValue();
+                if (value instanceof Number) {
+                        return ((Number) value).intValue();
         }
 
         return Integer.parseInt(value.toString());
@@ -687,8 +650,8 @@ private static SyncToolSpecification findElementTool() {
             return null;
         }
 
-        if (value instanceof Number number) {
-            return number.intValue();
+                if (value instanceof Number) {
+                        return ((Number) value).intValue();
         }
 
         return Integer.parseInt(value.toString());
